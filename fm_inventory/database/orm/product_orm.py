@@ -1,9 +1,8 @@
-from fm_inventory.database.orm import AbstractBase, DeclarativeBase
+from fm_inventory.database.orm import AbstractBase
 from sqlalchemy.dialects.postgresql import UUID
 
 from sqlalchemy import Column, String, Table, ForeignKey, Integer, Boolean, BigInteger
 from sqlalchemy.orm import relationship
-from fm_inventory.database_conf import Base
 
 product_label_table = Table(
     "product_label",

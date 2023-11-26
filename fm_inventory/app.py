@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fm_inventory.routers.product_route import api_router as product_router
-from fm_inventory.database_conf import DeclarativeBase
+from fm_inventory.routers.cart_route import api_router as cart_router
 
 
 def intialize_app():
@@ -9,6 +9,7 @@ def intialize_app():
 
     # include cors
     app.include_router(router=product_router)
+    app.include_router(router=cart_router)
     return app
 
 

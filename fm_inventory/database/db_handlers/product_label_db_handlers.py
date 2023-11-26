@@ -41,7 +41,7 @@ async def create_product(product: Product, labels: List[LabelProfile] = None):
 
         if not result:
             LOGGER.error("prodcut was not created")
-            session.rollback()
+            await session.rollback()
             raise CreateError
 
         orm_labels = []
@@ -143,10 +143,11 @@ async def update_product(
             LOGGER.error("product was not updated")
             raise UpdateError
 
+        # Add new labels
+        new_labels = []
         if product_update.labels:
             orm_labels = await _get_labels(labels=labels)
-            # Add new labels
-            new_labels = []
+
             existing_label_ids = {label.id for label in result.labels}
 
             for label in orm_labels:
@@ -181,14 +182,19 @@ async def update_product_quantity(product_id: UUID, quantity_to_be_purchased: in
 
         product = (await session.execute(statement=stmt)).scalar_one_or_none()
         # tracker strict update criteria
+
+        updated_quanitity = product.quantity
+
+        updated_quanitity += quantity_to_be_purchased
+
         update_stmt = (
             update(ProductDB)
             .where(
                 and_(ProductDB.id == product_id, ProductDB.tracker == product.tracker)
             )
             .values(
-                quantity=product.quantity - quantity_to_be_purchased,
-                version=ProductDB.tracker + 1,
+                quantity=updated_quanitity,
+                tracker=ProductDB.tracker + 1,
             )
             .returning(ProductDB)
         )

@@ -75,3 +75,24 @@ async def delete_product(product_id: UUID):
 
     await product_db_handler.delete_product(product_id=product_id)
     return {}
+
+
+# Product Guard
+
+
+async def product_cart_processor(product_id: UUID, quantity: int):
+    product_profile = await get_product(product_id=product_id)
+
+    if product_profile.quantity == 0 and quantity < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="product is out of stock"
+        )
+    elif abs(quantity) > product_profile.quantity and quantity < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"{abs(quantity)} is greater than the available product quantity: {product_profile.quantity}",
+        )
+
+    return await product_db_handler.update_product_quantity(
+        product_id=product_id, quantity_to_be_purchased=quantity
+    )

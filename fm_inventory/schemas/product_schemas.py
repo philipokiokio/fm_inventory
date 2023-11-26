@@ -6,8 +6,8 @@ from fm_inventory.schemas import (
     conlist,
     model_validator,
     List,
+    UUID,
 )
-from uuid import UUID
 from datetime import datetime
 from enum import Enum
 
