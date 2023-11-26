@@ -67,12 +67,6 @@ class ProductUpdate(AbstractModel):
         return self
 
 
-class ProductOwner(AbstractModel):
-    user_uid: UUID
-    full_name: str
-    email: str
-
-
 class ProductProfile(Product):
     id: UUID
     date_created_utc: datetime
